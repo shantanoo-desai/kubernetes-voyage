@@ -63,7 +63,7 @@ commit: 15cede53bdc5fe242228853e737333b09d4336b5
 
 #### Syntax
 
-> kubectl <action> <resource>
+> kubectl _action_ _resource_ _options_
 
 `<action>`: create, expose, run ...
 
@@ -83,7 +83,7 @@ View the Cluster
 ```bash
 $ kubectl.exe cluster-info
 
-des@IKAP-TOP28:~/kubernetes$ kubectl cluster-info
+$ kubectl cluster-info
 Kubernetes master is running at https://kubernetes.docker.internal:6443
 KubeDNS is running at https://kubernetes.docker.internal:6443/api/v1/namespaces/kube-system/services/kube-dns:dns/proxy
 ```
@@ -184,21 +184,21 @@ $
 $ kubectl.exe describe pods # get extensive detail of pod in Human-Readable format
 ```
 
-> Pod Name Syntax: <Name_Of_Deployment>-<Pod-Generated-Hash>-<Hash-Version>
+> Pod Name Syntax: `DeploymentName-PodGeneratedHash-RandomGeneratedName`
 
 
 ### Kubernetes Nodes
 
 Node: Worker machine (virtual / physical) 
 
-Each Node is managed by Kubernetes Master (responsible for scheduling Pods on Nodes)
+Each Node is managed by Kubernetes Control Plane (responsible for scheduling Pods on Nodes)
 
 Every Node runs at least:
 
 - Kubelet: communication between k8s master and node, manages running container on the node
 - Container Runtime: for pulling images from a registry, unpacking the container, running the app
 
-Pods have a _lifetime_ and _mortal_.
+> Pods have a _lifetime_ and are _mortal_.
 
 Each Pod in a Node has unique IP Address, even for pods with same names.
 
@@ -230,7 +230,9 @@ These `type` are:
 - `LoadBalancer`: external Load Balancer and assigns a fixed IP to Service.
 - `ExternalName`: mapping to `CNAME` for DNS
 
-    Superset::LoadBalancer(Superset::NodePort(Superset::ClusterIP))
+
+    LoadBalancer::Superset(NodePort::SuperSet(ClusterIP))
+
 
 #### Get Services
 
@@ -254,6 +256,9 @@ NAME                  TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)         
 kubernetes            ClusterIP   10.96.0.1       <none>        443/TCP          24d
 kubernetes-bootcamp   NodePort    10.101.57.158   <none>        8080:32066/TCP   7s
 ```
+
+here `NodePort` will be `32066` for external usage
+
 
 #### Get Description of Services
 
@@ -311,7 +316,12 @@ $ kubectl.exe get services -l app=kubernetes-bootcamp
 
 ```bash
 $ kubectl.exe label pod <POD_NAME> <LabelName>
-pod/kubernetes-bootcamp-57978f5f5d-nptrt labeled
+```
+
+_Example_
+
+```bash
+$ kubectl.exe label pod kubernetes-bootcamp-57978f5f5d-nptrt version=v1
 ```
 
 To see the applied label, get pod description
@@ -325,5 +335,4 @@ $ kubectl.exe describe pods <POD_NAME>
 ```bash
 $ kubectl.exe get pods -l <LabelName> # here version=v1
 ```
-
 
