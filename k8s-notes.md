@@ -206,6 +206,25 @@ Each Pod in a Node has unique IP Address, even for pods with same names.
 
 Maintain a replicas of the Pods on a Node, in order to avoid downtimes. Just keep copies running in order to avoid a Pod failure.
 
+#### Get ReplicaSets
+
+```bash
+$ kubectl.exe get rs
+```
+
+> Syntax: [_deployment-name]-[_random-string-using-pod-template-hash-as-seed]
+
+_Example_:
+
+```bash
+$ kubectl.exe get rs
+NAME                             DESIRED   CURRENT   READY   AGE
+kubernetes-bootcamp-57978f5f5d   1         1         1       4m35s
+```
+
+- `DESIRED`: desired number of replicas of the application
+- `CURRENT`: how many replicas are currently running
+
 ### Kubernetes Service
 
 Abstraction layer to define _logical set_ of Pods and enable:
@@ -335,4 +354,89 @@ $ kubectl.exe describe pods <POD_NAME>
 ```bash
 $ kubectl.exe get pods -l <LabelName> # here version=v1
 ```
+
+#### Delete Service
+
+```bash
+$ kubectl.exe delete service -l <LabelName>
+```
+
+##Scaling using Kubernetes
+
+When traffic increases to app, you need to scale
+
+**Scaling** accomplished by changing replicas in Deployment
+
+Distributing traffic to such replicas of the same application
+on different Nodes needs a **load-balancer** provided by **Kubernetes Services**
+
+```bash
+$ kubectl.exe scale deployments/<deployment-name> --replicas=Replica-Numbers
+```
+
+_Example_
+
+```bash
+$ kubectl.exe scale deployments/kubernetes-bootcamp --replicas=4
+deployment.apps/kubernetes-bootcamp scaled
+```
+
+Get more information on scaled deployment using:
+
+```bash
+$ kubectl.exe get pods -o wide
+
+NAME                                   READY   STATUS    RESTARTS   AGE   IP           NODE       NOMINATED NODE   READINESS GATES
+kubernetes-bootcamp-57978f5f5d-k579l   1/1     Running   0          5s    172.17.0.6   minikube   <none>           <none>
+kubernetes-bootcamp-57978f5f5d-k6ns2   1/1     Running   0          15m   172.17.0.3   minikube   <none>           <none>
+kubernetes-bootcamp-57978f5f5d-m7gph   1/1     Running   0          5s    172.17.0.4   minikube   <none>           <none>
+kubernetes-bootcamp-57978f5f5d-xkdrl   1/1     Running   0          5s    172.17.0.5   minikube   <none>           <none>
+```
+
+Note new pods with different IP Addresses are now _scaled up_ with the application.
+
+Scaling Up is logged into the deployment which is visible via different IP addresses
+for the Pods
+
+```bash
+$ kubectl.exe describe deployments/kubernetes-bootcamp
+```
+
+#### Load-Balancing for Replicas
+
+Deploy a load-balancer service using
+
+```bash
+$ kubectl.exe expose deployments/kubernetes-bootcamp \
+  --type="LoadBalancer" \
+  --port=8080
+```
+
+Get the `NodePort` using:
+
+```bash
+$ kubectl.exe get services/kubernetes-bootcamp
+```
+
+Use **PostMan** to query the application on the following
+
+    MinikubeIP:NodePort
+
+> __NOTE__: make sure to disable `Connection` in the header settings of query
+
+This is should hit different pods each pods on every query.
+
+You can verify this by checking the name of the Pods and the payload for the query
+in this particular case of `kubernetes-bootcamp:v1` application
+
+#### Scaling Down
+
+Scale Down by reducing the number of replicas for the application
+
+__Example__
+
+```bash
+$ kubectl.exe scale deployments/kubernetes-bootcamp --replicas=2
+```
+Reduce from 4 -> 2 in this case
 
