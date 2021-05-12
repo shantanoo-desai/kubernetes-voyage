@@ -440,3 +440,54 @@ $ kubectl.exe scale deployments/kubernetes-bootcamp --replicas=2
 ```
 Reduce from 4 -> 2 in this case
 
+### Rolling Updats in Kubernetes
+
+Deploy new versions of application without downtimes
+
+Achieved via incrementatlly updating Pods instances with new ones
+
+> by default, maximum number of pods that can be unavailable during the update
+  and maximum number of pods that can be created is ONE
+
+However, can be configured to be numbers or percentages of Pods.
+
+> If Deployment exposed publicly, Service will load-balance the traffic only to 
+ available Pods during the update
+
+
+#### Update Application
+
+```bash
+$ kubectl.exe set image deployments/DEPLOYMENT-NAME \ 
+  DEPLOYMENT-NAME=ContainerRepository:Version
+```
+
+_Example_
+
+```bash
+$ kubectl.exe set image deployments/kubernetes-bootcamp \
+  kubernetes-bootcamp=jocatalin/kubernetes-bootcamp:v2
+```
+
+#### Rollout status
+
+```bash
+$ kubectl.exe rollout status deployments/DEPLOYMENT-NAME
+```
+
+_Example_
+
+```bash
+$ kubectl.exe rollout status deployment/kubernetes-bootcamp
+deployment "kubernetes-bootcamp" successfully rolled out
+```
+
+#### Undo Rollout
+
+If you added some false version e.g. `kubernetes-bootcamp:v10` then you can revert
+back to the previous version using
+
+```bash
+$ kubectl.exe rollout undo deployments/kubernetes-bootcamp
+```
+
