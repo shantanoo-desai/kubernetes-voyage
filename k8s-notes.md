@@ -29,6 +29,10 @@ Engine - 20.10.5
 Compose - 1.29.0
 Kubernetes - v1.19.7
 
+> **Note**: if using Docker Desktop enable Kubernetes from the GUI and skip past the `minikube` setup.
+> Also replace `kubectl.exe` to `kubectl` in WSL2 shell terminal
+
+
 ### minikube
 
 #### Setup
@@ -491,3 +495,18 @@ back to the previous version using
 $ kubectl.exe rollout undo deployments/kubernetes-bootcamp
 ```
 
+### Applying Configuration
+
+```bash
+$ kubectl apply -f DEPLOYMENT_CONFIGURATION.yml
+```
+
+_Example_:
+
+```bash
+$ kubectl apply -f configurations/01-nginx-deployment.yml
+```
+
+You can change the configuration and apply `kubectl apply -f config.yaml` and changes are picked up
+
+`-f` flag determines the file for the deployment
