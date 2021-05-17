@@ -29,5 +29,15 @@ $ kubectl get secrets/mongodb-secret
 
 ### External Service
 
-- `LoadBalancer` does not work for Windows 10 Docker-Desktop and Kubernetes
-- Use `NodePort` as a `Service` type and hit the IP Address of the Machine with the Port
+Configure the an External Service in the deployment file with `type` set to `LoadBalancer` and `port` on which particular port you want to
+make the service reachable
+
+```yaml
+spec:
+    type: LoadBalancer
+    ports:
+    - port: 30000
+      targetPort: 8081
+```
+
+For Docker-Desktop use `localhost` or your Machine's IP Address
