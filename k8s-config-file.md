@@ -37,6 +37,7 @@ Almost every k8s object include two nested object fields: `spec` and `status`
 
 ### Example Configuration
 
+_Deployment_
 
 ```yaml
 apiVersion: apps/v1 # Different Objects have different API Versions
@@ -59,8 +60,27 @@ spec:
                 - name: nginx
                   image: nginx:1.16
                   ports:
-                  - containerPorts: 80 
+                  - containerPorts: 8080
 ```
+
+_Service_
+
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+    name: nginx-service
+spec:
+    selector:
+        app: nginx # the label for deployment
+    ports:
+        - protocol: TCP
+          port: 80 # Port this particular Service is exposed
+          targetPort: 8080 # Port of the pod mentioned in `containerPorts`
+```
+
+- `metadata` contains the Labels and `spec` contains the selectors for these labels
+- `Deployment` `metadata.labels` is used by `Service` to connect to each other
 
 ## Best Practices
 
